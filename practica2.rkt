@@ -13,7 +13,7 @@
 ;;Data type of listas
 (define-type Listas
   [lista-vacia]
-  [lista ( e FWAEL?) (l Listas?)];lista-e
+  [lista (e FWAEL?) (l Listas?)];lista-e
   )
   
  ;;Parser
