@@ -124,11 +124,17 @@
       [lcar (lista) (lconsV-cabeza (interp lista amb))]
       [lcdr (lista) (lconsV-resto (interp lista amb))]
       [with (ast params body) (if ast
-                                  1
+                                  ;1
                                   (interp body (foldl (lambda (b env)
                                                         (aSub (bind-nombre b)
                                                               (interp (bind-valor b) env)
                                                               env))
+                                                      amb
+                                                      params))
+                                  (interp body (foldl (lambda (b ambiente)
+                                                        (aSub (bind-nombre b)
+                                                              (interp (bind-valor b) amb)
+                                                              ambiente))
                                                       amb
                                                       params)))]
       [fun (lst-params cuerpo) (closureV lst-params 
