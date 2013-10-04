@@ -27,16 +27,18 @@
   [bind (nombre symbol?)
         (valor FWAEL?)])
 
-;;
-;;
+;; Tipo de dato que representa un ambiente,
+;; un ambiente puede ser vacio o bien recibir un identificador, 
+;; un valor asociado a este, y un ambiente.
 (define-type Ambiente
   [mtSub]
   [aSub (id symbol?)
         (valor FWAEL-Value?)
         (env Ambiente?)])
 
-;;
-;;
+;; Tipo de dato que representa la sintaxis abstracta de FWAEL-Value,
+;; este es la sintaxis que se utilizara en el interp para denotar,
+;; que ya paso por este analisis
 (define-type FWAEL-Value
   [numV (n number?)]
   [boolV (b boolean?)]
@@ -57,8 +59,9 @@
          lista-binds)))
 
    
-;;
-;;
+;; Funcion que busca un identificador en un ambiente,
+;; si lo encuentra regresa el valor del identificador, si no regresa un error
+;; lookup: symbol Ambiente -> FWAEL-Value
 (define lookup
   (lambda (var amb)
     (type-case Ambiente amb
@@ -70,8 +73,8 @@
                         (lookup var a))]
       )))
 
-;;
-;;
+;; Parser : funcion que transforma la sintaxis normal en sintaxis de FWAEL
+;; parser : exp -> FWAEL
 (define parser
   (lambda (expresion)
     (cond
@@ -103,8 +106,9 @@
          )]
       )))
 
-;;
-;; interp
+;; interp: funcion que que realiza los calculos que se le soliciten y regresa
+;; el resultado pero en la sitaxis FWAEL-Value
+;; interp: FWAEL Ambiente -> FWAEL-Value
 (define interp
   (lambda (expr amb)
     (type-case FWAEL expr
@@ -145,8 +149,8 @@
                                    ))]
       )))
 
-;;
-;;
+;; opera-fwael: funcion que realiza las operaciones aritmeticas
+;; opera-fwael: f FWAEL FWAEL -> FWAEL-Value
 (define opera-fwael
   (lambda (f i d)
     (case f
@@ -160,20 +164,27 @@
                     (numV-n d)))]
     )))
 
-;;
+;;prueba: funcion de ejemplo de prueba que vienen en el pdf
+;;prueba: exp -> FWAEL-Value
 (define prueba
   (lambda (exp)
     (interp (parser exp) (mtSub))))
 
-;;Funciones de ejemplo de prueba que vienen en el pdf
+;;Aplicacion de la funcion prueba, 
+;;p1: exp -> FWAEL-Value
 (define p1
   (prueba '(with {[cubo {fun {n} {* n {* n n}}}]}
                  {lcons {cubo 1} {lcons {cubo 2} {lcons {cubo 3} lempty}}})))
-  
+
+;;Aplicacion de la funcion prueba, 
+;;p2: exp -> FWAEL-Value
 (define p2
   (prueba '(with {[lista {lcons 1 {lcons 2 {lcons 3 lempty}}}]
                   [doble {fun{x} {+ x x}}]}
                  {doble {lcar {lcdr lista}}})))
+
+;;Aplicacion de la funcion prueba, 
+;;p3: exp -> FWAEL-Value
 (define p3
   (prueba '(with {[lista {lcons {fun {x} x} {lcons {fun {x} {/ 1 x}} {lcons 3 lempty}}}]}
                  {{lcar lista} {{lcar {lcdr lista}} {lcar {lcdr {lcdr lista}}}}}))
